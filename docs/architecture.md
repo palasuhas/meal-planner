@@ -346,7 +346,7 @@ is no workflow file and no build step, because there is nothing to build — rel
 throughout and `index.html` at the repo root.
 
 ```
-gh api repos/thelivinsine/meal-planner/pages/builds/latest --jq '{status, commit}'
+gh api repos/palasuhas/meal-planner/pages/builds/latest --jq '{status, commit}'
 ```
 
 `status` goes `building` → `built`, usually inside a minute. A stale-looking page after that is

@@ -1,260 +1,71 @@
-# Mise — weekly meal planner
+# Mise: weekly meal planner
 
-Plan what you're eating this week. Browse a catalogue of 50 recipes, drop them into
-breakfast / lunch / dinner slots on real dates, and bookmark the ones you like.
-Everything is saved in your own browser — no account, no server, nothing leaves your machine.
+**Purpose.** Make a week's meals easier to organise. Browse 50 recipes, put them into
+breakfast, lunch and dinner slots on real dates, and bookmark the ones you want to return to.
 
-**Live app:** https://thelivinsine.github.io/meal-planner/
-**Code:** https://github.com/thelivinsine/meal-planner
+**Summary.**
 
-## Built under deliberate constraints
+- Plan one day at a time, browse recipes, and keep a list of favourites.
+- Filter by meal, diet, cuisine and ingredients; switch between cards and a compact list.
+- Your plan stays in this browser, with no account or server-side storage.
+- Plain HTML, CSS and JavaScript, with no dependencies or build step.
 
-| | |
-|---|---|
-| **Stack** | Four static files: the app is one HTML, one CSS and one JS, plus `landing.html`, a self-contained landing page. Vanilla — no frameworks, no libraries, no build step |
-| **Data** | `localStorage` only. No server, no database, no API calls — with the one exception below |
-| **Hosting** | GitHub Pages, static files, relative paths, `index.html` at the root. [`landing.html`](https://thelivinsine.github.io/meal-planner/landing.html) sits beside it; the sidebar wordmark links to it |
-| **Tests** | No test framework, per the constraints. One saved script, `node check.mjs` — 144 checks: contrast in both themes, action and id wiring, the values that have to be written twice, and every token `landing.html` copies, compared against `style.css` in both themes. No dependencies, no config, never served to the browser — [how that works](docs/architecture.md#how-this-gets-tested) |
+**[Open the planner](https://palasuhas.github.io/meal-planner/)** ·
+[Product introduction](https://palasuhas.github.io/meal-planner/landing.html) ·
+[Source](https://github.com/palasuhas/meal-planner)
 
-The one place the "static files only" rule bends is Google Fonts, the app's single external
-request; blocked or offline, you get the fallback stack.
+## Try it
 
-## Where to read what
+Pick a date in Week, choose an empty meal slot, and add a recipe. Open the recipe to read
+its ingredients and method, or bookmark it for later. Reload the page to see the plan saved
+in your browser. Light and dark themes are available.
 
-Ten documents, each with one job:
+The catalogue includes Indian and high-protein recipes. Recipe tags describe the catalogue;
+they are not personalised nutritional advice.
 
-| | |
-|---|---|
-| **This file** | What the app is and what it does |
-| [docs/status.md](docs/status.md) | **Start here in a new session.** Live commit, open work, next jobs, what isn't verified. The only doc that goes stale |
-| [docs/architecture.md](docs/architecture.md) | The four files, the data model, storage, rendering, and how it gets tested |
-| [docs/decisions.md](docs/decisions.md) | Why each choice was made — including the CSS traps that each cost a real bug |
-| [CHANGELOG.md](CHANGELOG.md) | What changed in each version, for a teammate. The version numbers are proposed; there are no tags yet |
-| [docs/log.md](docs/log.md) | What happened in what order, and what each round of testing covered |
-| [docs/dark-mode-reference.md](docs/dark-mode-reference.md) | How ChatGPT and PowerToys build their dark greys — the nesting ladder (deeper means lighter), measured hexes, hover deltas, edge and shadow treatment, and where Mise's dark tokens differ |
-| [docs/light-mode-reference.md](docs/light-mode-reference.md) | The companion for light — why the ladder runs out at white, why hovers point the other way, and why light mode has shadows and dark mode has none |
-| [docs/claude-md-starter.md](docs/claude-md-starter.md) | Not about Mise: the portable `CLAUDE.md` skeleton for starting a new project, and the four structural moves worth copying |
-| `CLAUDE.md` | Rules for the AI assistant working in this repo |
+## Data and limits
 
-## Planning a week, start to finish
+Plans and bookmarks use `localStorage`. They do not sync between devices or browser profiles,
+and clearing site data removes them. There is no export or account recovery. Google Fonts
+is an external request; if unavailable, the app uses its fallback font stack.
 
-```mermaid
-flowchart TD
-    A([Open the app]) --> B[Week view opens on today]
-    B --> C[Pick a day from the week bar]
-    C --> D{How do you want to add a meal?}
-    D -->|From the week| E[Tap + Add on an empty meal]
-    E --> F[Recipe list opens, filtered to that meal]
-    F --> G[Tap Add on a recipe]
-    D -->|From a recipe| H[Browse Recipes or Saved]
-    H --> I[Tap Add to week]
-    I --> J[Choose the day and meal]
-    G --> K[Meal appears on the day]
-    J --> K
-    K -->|Changed your mind| R[Tap × on the meal to remove it]
-    R --> C
-    K --> L{More to plan?}
-    L -->|Yes| C
-    L -->|No| M([Your week is planned, saved in your browser])
+Shopping lists, custom recipes, shared plans and a month calendar are outside the current
+scope. The [product guide](docs/product-guide.md) explains the full workflow and tradeoffs.
+
+## Run locally
+
+Nothing needs installing. Open `index.html`, or use a local HTTP server for more consistent
+browser-storage behavior than a `file://` address. With Python installed:
+
+```sh
+python -m http.server 8765 --bind 127.0.0.1
 ```
 
-## What it does
+Open <http://127.0.0.1:8765/>. The separate introduction is at
+<http://127.0.0.1:8765/landing.html>.
 
-**Recipes** — the cookbook.
-- 50 recipes, each with tags, cooking time, ingredients and a short method. Over half are Indian
-  and roughly three quarters high-protein; the rest are tagged `balanced`. Both are ordinary tags,
-  so the `indian` and `high-protein` chips filter on them
-- Search matches names, tags **and** ingredients — so "chickpea" finds the curry
-- **One row of tools**: **Filters**, a **tile / list** toggle and then the search field. Filters carries a
-  count badge and opens a single row of dropdowns — *Macros*, *Meal*, *Diet*, *Cuisine & style*,
-  *Main protein*. Each is a short list of checkboxes with its own count badge, and **Clear** empties
-  the lot. Sixteen tags, one line
-- **Two boxes in the same group widen the list; one in each narrows it.** *high-protein* and
-  *balanced* means either; *breakfast* and *vegan* means a vegan breakfast
-- The same row appears on **Saved** and inside the week's recipe picker. Each list keeps its own
-  search and filters — what you typed on Recipes has nothing to do with what you want in Saved —
-  while the tile / list choice is one preference for all three, remembered between visits
-- A card shows the name, the minutes, and **at most three tags**. `quick` is never one of them: the
-  minutes beside the name already say so
-- **In list view the add button is just its icon** — a small calendar-plus square instead of a
-  wide *Add to Mon breakfast* bar, so the recipe's name is the loudest thing in the row. On a phone
-  the grid's cards do the same. The words are still there for a screen reader, at every width
-- Tapping a card opens a detail panel with the full tag set; close it with the ×, Escape, or a tap
-  outside
+## Check a change
 
-**Week** — your plan, one day at a time.
-- **No heading at all.** There was a rotating greeting, and under it the day's name; both said
-  what the week bar already says, so the week bar is now the first thing on the page and the meal
-  cards sit straight under it. The day's name is still there for a screen reader, which has no
-  week bar to look at
-- The week sits straight on the page — no tile around it: the date range with ← / → either side,
-  and the seven days under it, weekday over date, the date in a circle. It is capped and centred
-  rather than spread across the column, because seven chips a hand's width apart stop reading as
-  one week. **Today** appears beside the range only once you've paged off the current week, which
-  is the only time it has work to do
-- **The selected day's circle fills with the accent.** Today is marked with a dot, and a day still
-  ahead of you with something planned is **ringed** in the accent — one shape with three states,
-  since a neutral tint has nowhere to go once the chips sit on the page. A day gone by is quieter
-  in both its name and its date, and gets **no ring even when it has meals on it**: the ring is
-  about what is still to come, and on a day you cannot act on it was the loudest mark on the row.
-  So the row is the overview: where you are, what day it is, and the shape of the week ahead
-- Under it, **one card per meal** — the biggest thing on the screen, which is the point of them. A filled one shows the recipe name in accent ink and underlined — tapping it
-  opens the recipe, and the line is there at rest rather than only on hover because a phone has no
-  hover — then its time and what it is (*10 min · Balanced ·
-  Vegetarian*), with a save bookmark and a × to clear it. Nothing inside the card gets a box of its
-  own — no pill, no tile, no second border.
-  An empty card is a dashed **+ Add a dinner** the width of it
-- Each slot can be filled, replaced, or cleared. Past days stay editable, so you can log what you
-  actually ate — they just read quieter
-- **The same layout at every width.** There is no mobile version of the week; only below 360px
-  does the day row wrap four and three, so every button clears 44px on a thumb
-- It opens on today when today is in the week on screen, Monday otherwise
+With Node.js installed:
 
-**The summary column** — wide screens only, down the right.
-- *At a glance*: how many of the day's three meals are planned, with a bar; total cooking time,
-  reading `0 min` rather than a dash on an empty day, because the dash looked like a rendering
-  fault; and a one-word read on balance from the macro tag every recipe carries
-- *Tips for today*: one line picked to fit the day in front of you rather than at random — it says
-  something different about an empty day, a half-full one, a day of nothing but meat, and a day
-  that adds up to two hours at the stove
-- Both are computed from the day beside them, which is why they're dropped rather than stacked on a
-  narrow screen: there's nothing in them you can't read off the meals themselves
-
-**Adding a meal — two ways in, never merged.**
-
-*From the week.* Tap **+ Add** on an empty slot and the recipe list takes the day's place — the
-three meal cards step aside, the week bar above them stays put, and **Back to the day** is the way
-out — in the picker's own head on a wide screen, in the top bar on a narrow one, never both. It is sized to finish on the screen, so the recipes scroll inside their own area and the page
-itself never scrolls. The day and meal are already known from the slot you tapped, so it never asks
-again — and **the list arrives filtered to that meal**: tap *Add a breakfast* and you get the
-fourteen breakfasts, not all fifty. That is a ticked box in the *Meal* dropdown with the filter row
-open, so you can see why the list is short and untick it if you want a breakfast at dinner. On a
-narrow screen the row starts closed and the count on the **Filters** button carries that instead —
-the dropdowns are 66px, and there they come out of the recipe list's height. The
-recipes appear as the same cards you get on the Recipes page, in whichever layout you last chose,
-except the button reads **Add to Thu breakfast** — or, in a list and on a phone, shows the
-calendar-plus icon alone — and fills the slot you tapped. Not sure about one? Tap the card to read the full
-recipe — the sheet's calendar icon adds it straight to the slot you came from, because the day and
-meal are already settled and this app never asks twice. This route is for empty slots only.
-
-*From a recipe.* **Add to week** on any card, or the calendar icon in the detail panel, opens a
-small dialog. The recipe name is the headline; "Add to week" sits above it as a small label.
-- Pick a day from seven buttons and a meal from three — everything visible, two taps
-- Picking a day that's already gone is allowed but flagged: the dialog says so, and that day's
-  button is drawn with a dashed border
-- If the slot is taken, the dialog names what's there and the button reads **Replace**
-
-**Saved** — exactly the recipes you've bookmarked, from either the card or the detail panel, with
-the same search, filters and layout toggle as Recipes over the top of them. The save control is the
-same bookmark shape as the *Saved* item in the sidebar, so the button that keeps a recipe and the
-place it goes look like one idea.
-Removing a bookmark drops it from Saved immediately but leaves it in your week: unsaving a recipe
-isn't the same as cancelling dinner.
-
-## For anyone reading this without a technical background
-
-**What it does.** Three screens. *Recipes* is the cookbook — search it, filter it, tap a recipe to
-read the ingredients and method. *Week* is your plan for the week: seven real days, three meal
-slots each. *Saved* is your shortlist of favourites.
-
-**How it saves your plan.** Your browser has a small built-in storage box. The app keeps your week
-and your bookmarks there, so closing the tab and coming back later keeps everything. The catch is
-that it's per-browser and per-device: your plan on your laptop is not the same plan as on your
-phone, and clearing your browsing data clears it. That's the honest trade for having no accounts
-and no server to run.
-
-Open in **two tabs at once** and they stay in step — plan a meal in one and the other picks it up,
-rather than the two of them overwriting each other's work, which is what used to happen.
-
-**One day at a time.** *Week* shows the seven days as a row of buttons and then the one day you
-picked, as three meal cards. That's true on a laptop and on a phone — the same screen, not two
-designs. A date drawn in a circle outline is a day still to come that you've already planned
-something for, so the row shows the shape of your week at a glance; days that have already passed
-just go pale. On a wide screen there's a column down the right with the day's numbers in it: how
-many meals you've planned, roughly how long they'll take, and one suggestion.
-
-**On a phone the list gets the screen.** Everything above it — the bar at the top, the week, the
-search and filters — is held to about a third of the height, measured rather than guessed, because
-it used to take two thirds and leave one recipe showing. That is why there is no *Mise* logo on a
-narrow screen: the row it sat in carries the way back out of a view instead.
-
-**Two ways to look at a list.** The two small buttons just left of every search box switch between cards
-in a grid and a single column of rows. It's the same recipes either way — the rows just fit more of
-them on the screen at once. A row gives the name the width and gathers the minutes and the tags over
-on the right, next to the buttons that act on them; on a phone the name gets two thirds of it. The
-app remembers which you picked.
-
-**What it deliberately doesn't do yet.** No shopping list, no month calendar, no adding your own
-recipes, no sharing a plan with anyone else. Those are sensible next steps rather than oversights —
-the reasoning for each is in [docs/decisions.md](docs/decisions.md#deliberately-not-built).
-
-## Five decisions worth reading
-
-The full set is in [docs/decisions.md](docs/decisions.md). These five cost the most to learn:
-
-- **The plan is keyed by real date, not by weekday.** `state.plan['2026-08-26|Dinner']`. It's what
-  makes next week a genuinely separate plan rather than the same seven slots relabelled — and it's
-  why entries older than four weeks get pruned on load.
-- **Contrast gets measured in both directions, by a script that reads the tokens out of the
-  stylesheet** — `check.mjs`. Text on its ground needs 4.5; two surfaces that touch need about 1.10
-  or the edge disappears. Checking only the first is how a palette ends up legible and shapeless —
-  one colour sat at 1.03 against a card, making a control invisible, while every text pair passed.
-  The script was rewritten from scratch five times before it was finally saved, which is its own
-  lesson: a check reconstructed from memory each round quietly gets weaker.
-- **Passing the measurements is not the same as looking right.** A palette that cleared every ratio
-  still read as one beige wash next to the mockups, twice, one shade apart. The script is a floor,
-  not a verdict — which is why the mockups get looked at again after it passes.
-- **A grey that is darker than the page cannot sit on a card.** The search field and the filter
-  chips were filled with a shade one step below the page, so on a white panel they read as gaps
-  punched through to the background rather than as controls resting on it. Both reference apps send
-  an input *up* towards white and let its hairline do the separating; that is now what Mise does,
-  and the tag pills — which have no hairline — are the one thing left going down.
-- **Read it, look at it, and measure it — they are three checks, not one.** Each has caught what
-  the other two could not. Two careful readings of the CSS missed a week rendering at a third of its
-  width, and one screenshot found it. A script found six things no screenshot could. And a hover
-  rule that changed nothing, plus a focus ring clipped away to a stray orange line, were invisible
-  to both — one took a mouse, the other a keyboard.
-- **A grid item with auto inline margins doesn't stretch to its track.** `margin: 0 auto` centres a
-  block but shrink-to-fits a grid item, so the week once rendered at a third of its width. Two
-  careful readings of the CSS missed it and one screenshot found it — which is why a rendered look
-  is the check for anything touching layout, not the optional extra.
-
-## The landing page
-
-[`landing.html`](https://thelivinsine.github.io/meal-planner/landing.html) is a second page and the
-only one that is not the app: an editorial prep-card layout — hairline rules instead of tiles, an
-oversized headline, the method as three numbered steps, and a mock week strip showing a planned
-Wednesday. Its CTAs go to the app.
-
-It is **self-contained on purpose**: its own inline `<style>`, and the palette **copied** out of
-`style.css` rather than imported. Importing would mean either a build step or 80KB of app rules with
-class names that collide — `.page`, `.brand`, `.day` and `.btn` all exist in both files. So the
-duplication is measured instead: `check.mjs` compares every token it declares against `style.css` in
-both themes, and a hex changed in one file and not the other fails the check.
-
-**The sidebar wordmark is the way there, and it exists over 1000px only** — under that the app is
-nameless, so there is no route to the landing page at all. A deliberate exception, with the
-reasoning in [decisions.md](docs/decisions.md#the-landing-page).
-
-## Running it locally
-
-Open `index.html` in a browser, or `landing.html` for the landing page. That's it — nothing to
-install.
-
-For a cleaner test of the saving behaviour, serve it over HTTP instead — over `file://` every local
-page on your machine shares one storage box, which muddies testing:
-
-```
-python -m http.server 8765
-```
-
-then visit http://localhost:8765.
-
-To check the colours and wiring after an edit:
-
-```
+```sh
 node check.mjs
 ```
 
-Ticks and crosses, one line each; it exits non-zero if anything fails. It reads the source files as
-text and changes nothing.
+The script checks contrast in both themes, action and ID wiring, shared storage settings,
+and the palette copied into the landing page. It does not replace a browser check of
+interaction, focus or responsive layout. See [how testing works](docs/architecture.md#how-this-gets-tested).
+
+## How it is built
+
+`index.html`, `style.css` and `app.js` form the planner. `landing.html` is a self-contained
+introduction. GitHub Pages serves the files directly from `main`.
+
+- [Architecture](docs/architecture.md): state, storage and rendering.
+- [Product guide](docs/product-guide.md): detailed walkthrough and design reasoning.
+- [Decisions](docs/decisions.md): the choices and bugs that shaped the app.
+- [Status](docs/status.md): current work and verification gaps.
+- [Changelog](CHANGELOG.md): changes over time.
+
+No new reuse license is granted by this readiness update. Existing rights and third-party
+terms remain unchanged.
