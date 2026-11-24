@@ -10,9 +10,11 @@ full walkthrough is retained in [the product guide](product-guide.md). The landi
 source links and the deployment-check command use the current GitHub owner. Licensing is
 unchanged at the owner's request. No planner behavior or layout changed.
 
-Validation: all 144 checks passed. The readiness PR records the resulting deployment.
-The older live-commit and browser
-observations below are dated history, not claims that those checks ran again today.
+Validation: all 144 checks passed. [PR #27](https://github.com/palasuhas/meal-planner/pull/27)
+was squash-merged as `570a2a8`; the GitHub Pages API reported `built` at that exact
+commit on 24 November 2026. Fresh live-page fetches failed with transport resets, so
+served content and browser behavior were not reverified. The older live-commit and
+browser observations below are dated history, not checks repeated today.
 
 | | |
 |---|---|
