@@ -2,6 +2,18 @@
 
 *The one doc that changes every session. Read it first; it is the only one here that goes stale.*
 
+## Repository readiness, 24 November 2026
+
+The public entry point is now <https://palasuhas.github.io/meal-planner/>. The shorter
+[README](../README.md) leads with the demo, local setup, data limitations and checks; the
+full walkthrough is retained in [the product guide](product-guide.md). The landing page's
+source links and the deployment-check command use the current GitHub owner. Licensing is
+unchanged at the owner's request. No planner behavior or layout changed.
+
+Validation: all 144 checks passed. The readiness PR records the resulting deployment.
+The older live-commit and browser
+observations below are dated history, not claims that those checks ran again today.
+
 | | |
 |---|---|
 | **Live** | **The app is `f55a6d7`** — PR [#26](https://github.com/thelivinsine/meal-planner/pull/26), squash-merged. Pages reported `built` at `f55a6d7`, and **all four served files were fetched back and compared against `main` byte for byte** — identical once line endings are normalised. Both deployed pages were then rendered and looked at: the landing page at 1280px, and the app's sidebar showing the wordmark unchanged at rest. The live markup reads back `class="brand brand-side" href="landing.html"`, and `landing.html` returns **200**. https://thelivinsine.github.io/meal-planner/landing.html <br><br>*Note on the rig:* `style.css` needed `curl --http1.1` to fetch — HTTP/2 reset the connection three times on that one file. A transport hiccup, not a deploy problem; the other three came over unaided. <br><br>*Previously:* **The app is `a4be1c9`** — PR [#25](https://github.com/thelivinsine/meal-planner/pull/25), squash-merged. Pages reported `built` at `a4be1c9`, all three served files were fetched back and compared against `main` **byte for byte** (identical once line endings are normalised), and the deployed page was rendered and looked at — **and, for the first time, *scripted*:** the live *Recipes* view was reached, switched to the list layout, toggled to dark and asked for its computed values. That closes the rig limit recorded below. It reads back `order=Filters@264 view-toggle@355 search@427`, the pressed layout button at `rgb(200,73,31)` with a transparent border, and the card ring at `solid 2px rgb(200,73,31)` light / `rgb(255,122,79)` dark. https://thelivinsine.github.io/meal-planner/ <br><br>*Previously:* **The app is `1b07bb0`** — PR [#24](https://github.com/thelivinsine/meal-planner/pull/24), squash-merged. Pages reported `built` at `1b07bb0`, all three served files were fetched back and compared against `main` **byte for byte** (identical once line endings are normalised), and the deployed page was rendered and looked at — the week view, which is the one the live rig can reach unaided. https://thelivinsine.github.io/meal-planner/ <br><br>*Previously:* **`51ae81f`** — PR [#23](https://github.com/thelivinsine/meal-planner/pull/23), squash-merged. Pages reported `built` at `51ae81f`, all three served files were fetched back and compared against `main` **byte for byte** (identical once line endings are normalised), and the deployed page was then rendered with the filter row and a dropdown open and looked at. https://thelivinsine.github.io/meal-planner/ |
