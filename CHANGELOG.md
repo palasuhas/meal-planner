@@ -147,11 +147,11 @@ Nothing yet. Everything merged to `main` is live and listed below.
 - The week's meal rows line up across all seven days, and the same recipe card
   is used on every list. (#2)
 
-[Unreleased]: https://github.com/thelivinsine/meal-planner/compare/f55a6d7...main
-[1.3.0]: https://github.com/thelivinsine/meal-planner/compare/a4be1c9...f55a6d7
-[1.2.0]: https://github.com/thelivinsine/meal-planner/compare/212ddd3...a4be1c9
-[1.1.1]: https://github.com/thelivinsine/meal-planner/compare/12ce708...212ddd3
-[1.1.0]: https://github.com/thelivinsine/meal-planner/compare/6e27431...12ce708
-[1.0.0]: https://github.com/thelivinsine/meal-planner/compare/49b3c16...6e27431
-[0.2.0]: https://github.com/thelivinsine/meal-planner/compare/409d7d2...49b3c16
-[0.1.0]: https://github.com/thelivinsine/meal-planner/compare/3dc982d...409d7d2
+[Unreleased]: https://github.com/palasuhas/meal-planner/compare/f55a6d7...main
+[1.3.0]: https://github.com/palasuhas/meal-planner/compare/a4be1c9...f55a6d7
+[1.2.0]: https://github.com/palasuhas/meal-planner/compare/212ddd3...a4be1c9
+[1.1.1]: https://github.com/palasuhas/meal-planner/compare/12ce708...212ddd3
+[1.1.0]: https://github.com/palasuhas/meal-planner/compare/6e27431...12ce708
+[1.0.0]: https://github.com/palasuhas/meal-planner/compare/49b3c16...6e27431
+[0.2.0]: https://github.com/palasuhas/meal-planner/compare/409d7d2...49b3c16
+[0.1.0]: https://github.com/palasuhas/meal-planner/compare/3dc982d...409d7d2
