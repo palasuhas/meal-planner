@@ -4,8 +4,11 @@ This repo was changed on GitHub on 2026-11-25. The agent rules moved from `CLAUD
 file (`CLAUDE.md` is now one line that loads it), and the skills, commands and plugins this repo
 uses now live in `.claude/` instead of on the machine. Before any other work:
 
-1. Pull the default branch into the local folder, and rebase any open worktree branch on it, so the
-   local copy matches GitHub.
+1. **This repo's history was rewritten on 2026-11-25** (personal emails replaced by the GitHub
+   no-reply address). Never `git pull` a copy made before that: it would merge the old history back.
+   Save any uncommitted work, then `git fetch` and `git reset --hard origin/<default branch>`, and
+   rebuild any old local branch with `git cherry-pick` onto it. Never push an old branch.
+   The three third-party skills listed in `.gitignore` are local-only here: the sync brings them.
 2. Pull the kit (`palasuhas/agent-context-kit`) and run
    `node <kit folder>/scripts/sync-skills.mjs .` from this repo. Commit what it changes, if anything.
 3. Delete this section and push.

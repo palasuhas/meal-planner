@@ -154,3 +154,11 @@ vite.config.ts.timestamp-*
 *.jpg
 *.jpeg
 !Light mode Mockups/*.png
+
+# Third-party skills synced from agent-context-kit without a licence to republish: kept local-only.
+.claude/skills/design-doc-mermaid/
+.claude/skills/web-design-guidelines/
+.claude/skills/writing-guidelines/
+
+# Editor workspace files are per machine.
+*.code-workspace
